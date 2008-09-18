@@ -1,0 +1,16 @@
+%form{ :action => '/save', :method => 'post' }
+  %input{ :type => 'hidden', :name => 'id', :value => @page.id }
+
+  %h2 Edit page
+  
+  %label Title
+  %br
+  %input{ :type => 'text', :name => 'title', :value => @page.title }
+  %br
+
+  %label Body
+  %br
+  %textarea{ :name => 'body', :rows => 28, :cols => 100 }= @page.body
+  %br
+
+  %input{ :type => 'submit', :value => 'Salvar' }

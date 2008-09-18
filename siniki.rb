@@ -49,6 +49,10 @@ class Page
   end
 end
 
+before do
+  @menu = Page.menu.processed_body
+end
+
 get '/setup' do
   DataMapper.auto_migrate!
   
@@ -58,6 +62,10 @@ get '/setup' do
   
   page = Page.new
   page.attributes = {:title => 'Menu'}
+  page.save
+  
+  page = Page.new
+  page.attributes = {:title => 'Header'}
   page.save
 
   "siniki is ready to run!"
@@ -93,20 +101,24 @@ post '/save' do
 end
 
 get '/new' do
-  erb :new
+  haml :new
 end
 
 get '/:permalink' do
-  @menu = Page.menu.processed_body
   @page = Page.first(:permalink => params[:permalink])
   if @page
-    erb :page
+    haml :page
   else
-    "Page does not exists (#{params[:permalink]})"
+    redirect '/' + params[:permalink] + '/new'
   end
+end
+
+get '/:permalink/new' do
+  @permalink = params[:permalink]
+  haml :new
 end
 
 get '/:permalink/edit' do
   @page = Page.first(:permalink => params[:permalink])
-  erb :edit  
+  haml :edit  
 end
