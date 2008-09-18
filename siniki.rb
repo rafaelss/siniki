@@ -30,6 +30,10 @@ class Page
   def self.welcome
     Page.first(:permalink => 'welcome')
   end
+  
+  def self.menu
+    Page.first(:permalink => 'menu')
+  end
 
   private
 
@@ -52,6 +56,10 @@ get '/setup' do
   page.attributes = {:title => 'Welcome'}
   page.save
   
+  page = Page.new
+  page.attributes = {:title => 'Menu'}
+  page.save
+
   "siniki is ready to run!"
 end
 
@@ -85,19 +93,20 @@ post '/save' do
 end
 
 get '/new' do
-  "<form action='/save' method='post'><h2>Edit welcome page</h2><label>Title</label><br/><input type='text' name='title'/><br/><label>Body</label><br/><textarea name='body' rows='28' cols='100'></textarea><br/><input type='submit' value='Salvar'/></form>"
+  erb :new
 end
 
 get '/:permalink' do
-  page = Page.first(:permalink => params[:permalink])
-  if page
-    "<h2>#{page.title}</h2>#{page.processed_body}"
+  @menu = Page.menu.processed_body
+  @page = Page.first(:permalink => params[:permalink])
+  if @page
+    erb :page
   else
     "Page does not exists (#{params[:permalink]})"
   end
 end
 
 get '/:permalink/edit' do
-  page = Page.first(:permalink => params[:permalink])
-  "<form action='/save' method='post'><input type='hidden' name='id' value='#{page.id}'/><h2>Edit page</h2><label>Title</label><br/><input type='text' name='title' value='#{page.title}'/><br/><label>Body</label><br/><textarea name='body' rows='28' cols='100'>#{page.body}</textarea><br/><input type='submit' value='Salvar'/></form>"
+  @page = Page.first(:permalink => params[:permalink])
+  erb :edit  
 end
