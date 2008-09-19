@@ -11,3 +11,4 @@ As URLs podem ser facilmente criadas e acessadas, tanto para visualiação quant
 * Colocar controle de usuários, com login, etc.
 * Criar um layout padrão
 * Possibilitar a criação de temas
+* Traduzir este README para inglês
