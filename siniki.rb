@@ -1,8 +1,14 @@
+#!/usr/bin/env ruby
+# -*- coding: utf-8 -*-
+
 require 'rubygems'
 require 'dm-core'
 require 'sinatra'
 require 'unicode'
 require 'rdiscount'
+require 'authorization'
+
+enable :sessions
 
 DataMapper.setup(:default, 'sqlite3:siniki.db')
 
@@ -38,14 +44,18 @@ class Page
   property :permalink, String, :nullable => false
   property :created_at, DateTime
   property :updated_at, DateTime
-  
+
   before :save, :set_permalink
   before :save, :process_body
-  
+
   def self.welcome
     Page.first(:permalink => 'welcome')
   end
-  
+
+  def self.header
+    Page.first(:permalink => 'header')
+  end
+
   def self.menu
     Page.first(:permalink => 'menu')
   end
@@ -64,24 +74,41 @@ class Page
   end
 end
 
+class User
+  include DataMapper::Resource
+  property :id, Integer, :serial => true
+  property :username, String, :nullable => false
+  property :password, String, :nullable => false
+end
+
+helpers do
+  include Sinatra::Authorization
+end
+
 before do
+  @header = Page.header.processed_body
   @menu = Page.menu.processed_body
 end
 
 get '/setup' do
   DataMapper.auto_migrate!
-  
+
   page = Page.new
   page.attributes = {:title => 'Welcome'}
   page.save
-  
+
   page = Page.new
   page.attributes = {:title => 'Menu'}
   page.save
-  
+
   page = Page.new
   page.attributes = {:title => 'Header'}
   page.save
+
+  # TODO change admin password
+  user = User.new
+  user.attributes = {:username => 'admin', :password => 'aaa123' }
+  user.save
 
   "siniki is ready to run!"
 end
@@ -96,6 +123,8 @@ end
 #end
 
 post '/save' do
+  require_administrative_privileges
+
   if params[:title].nil?
     params[:title] = 'Welcome'
   end
@@ -116,7 +145,18 @@ post '/save' do
 end
 
 get '/new' do
+  require_administrative_privileges
+
   haml :new
+end
+
+get '/login' do
+  haml :login
+end
+
+get '/logout' do
+  session.delete(:username)
+  redirect '/welcome'
 end
 
 get '/:permalink' do
@@ -129,11 +169,15 @@ get '/:permalink' do
 end
 
 get '/:permalink/new' do
+  require_administrative_privileges
+
   @permalink = params[:permalink]
   haml :new
 end
 
 get '/:permalink/edit' do
+  require_administrative_privileges
+
   @page = Page.first(:permalink => params[:permalink])
-  haml :edit  
+  haml :edit
 end
