@@ -6,7 +6,6 @@ require 'dm-core'
 require 'sinatra'
 require 'unicode'
 require 'rdiscount'
-require 'authorization'
 
 enable :sessions
 
@@ -79,10 +78,9 @@ class User
   property :id, Integer, :serial => true
   property :username, String, :nullable => false
   property :password, String, :nullable => false
-end
-
-helpers do
-  include Sinatra::Authorization
+  def self.login(username, password)
+    first(:username => username, :password => password)
+  end
 end
 
 before do
@@ -113,6 +111,19 @@ get '/setup' do
   "siniki is ready to run!"
 end
 
+helpers do
+  def logged_in?
+    session[:username]
+  end
+
+  def require_login
+    unless logged_in?
+      session[:redirect_back_to] = request.env['REQUEST_URI']
+      redirect '/login'
+    end
+  end
+end
+
 get '/' do
   redirect '/welcome'
 end
@@ -123,8 +134,6 @@ end
 #end
 
 post '/save' do
-  require_administrative_privileges
-
   if params[:title].nil?
     params[:title] = 'Welcome'
   end
@@ -145,12 +154,21 @@ post '/save' do
 end
 
 get '/new' do
-  require_administrative_privileges
+  require_login
 
   haml :new
 end
 
 get '/login' do
+  haml :login
+end
+
+post '/login' do
+  user = User.login(params[:username], params[:password])
+  if user
+    session[:username] = user.username
+    return redirect session.delete(:redirect_back_to)
+  end
   haml :login
 end
 
@@ -169,14 +187,14 @@ get '/:permalink' do
 end
 
 get '/:permalink/new' do
-  require_administrative_privileges
+  require_login
 
   @permalink = params[:permalink]
   haml :new
 end
 
 get '/:permalink/edit' do
-  require_administrative_privileges
+  require_login
 
   @page = Page.first(:permalink => params[:permalink])
   haml :edit
