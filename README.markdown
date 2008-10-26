@@ -5,10 +5,11 @@ As URLs podem ser facilmente criadas e acessadas, tanto para visualiação quant
 
 ### TODO
 
-* Programar testes
-* Possibilidade de excluir uma página
-* Criar uma gem
-* Colocar controle de usuários, com login, etc.
 * Criar um layout padrão
+* Criar historico das páginas
+* Possibilitar upload de imagens
+* Colocar controle de usuários, com login, etc.
+* Programar testes
+* Criar uma gem
 * Possibilitar a criação de temas
 * Traduzir este README para inglês

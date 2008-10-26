@@ -78,6 +78,7 @@ class User
   property :id, Integer, :serial => true
   property :username, String, :nullable => false
   property :password, String, :nullable => false
+
   def self.login(username, password)
     first(:username => username, :password => password)
   end
