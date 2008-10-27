@@ -17,19 +17,23 @@ class Page
   belongs_to :page, :child_key => [:parent_id]
 
   def self.welcome
-    Page.first(:permalink => 'welcome')
+    Page.current('welcome')
   end
 
   def self.header
-    Page.first(:permalink => 'header')
+    Page.current('header')
   end
 
   def self.menu
-    Page.first(:permalink => 'menu')
+    Page.current('menu')
   end
 
-  def self.last_version(permalink)
+  def self.current(permalink)
     Page.first(:permalink => permalink, :order => [:created_at.desc])
+  end
+
+  def self.all_versions(permalink)
+    Page.all(:permalink => permalink, :order => [:created_at.desc])
   end
 
   private

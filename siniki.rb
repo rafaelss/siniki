@@ -5,6 +5,7 @@ require 'dm-core'
 require 'sinatra'
 require 'unicode'
 require 'rdiscount'
+require 'activesupport'
 require 'actions'
 require 'models'
 require 'helpers'
@@ -48,11 +49,11 @@ get '/setup' do
   page.save
 
   page = Page.new
-  page.attributes = {:title => 'Menu'}
+  page.attributes = {:title => 'Menu', :body => '[Edit menu](/menu/edit)'}
   page.save
 
   page = Page.new
-  page.attributes = {:title => 'Header'}
+  page.attributes = {:title => 'Header', :body => '[Edit header](/header/edit)'}
   page.save
 
   # TODO change admin password
@@ -65,7 +66,7 @@ end
 
 post '/save' do
   if params[:title].nil?
-    params[:title] = 'Welcome'
+    params[:title] = params[:permalink].titleize
   end
 
   page_id = params.delete('id')
@@ -109,7 +110,7 @@ get '/logout' do
 end
 
 get '/:permalink' do
-  @page = Page.last_version(params[:permalink])
+  @page = Page.current(params[:permalink])
   if @page
     haml :page
   else
@@ -127,8 +128,18 @@ end
 get '/:permalink/edit' do
   require_login
 
-  @page = Page.last_version(params[:permalink])
+  @page = Page.current(params[:permalink])
   haml :edit
+end
+
+get '/:permalink/history' do
+  @pages = Page.all_versions(params[:permalink])
+  haml :history
+end
+
+get '/:permalink/version/:id' do
+  @page = Page.get(params[:id])
+  haml :page
 end
 
 get '/' do

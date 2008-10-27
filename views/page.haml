@@ -1,5 +1,6 @@
 - if logged_in?
-  %a{:href => params[:permalink] + '/edit'} edit
+  %a{:href => '/' + params[:permalink] + '/edit'} edit
+  %a{:href => '/' + params[:permalink] + '/history'} history
 
 %h2= @page.title.to_s
 =@page.html_body.to_s

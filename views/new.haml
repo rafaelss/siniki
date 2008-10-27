@@ -1,13 +1,8 @@
 %form{ :action => '/save', :method => 'post' }
   %h2 Create new page
-  
+
   - unless @permalink.nil?
     %input{ :type => 'hidden', :name => 'permalink', :value => @permalink }
-
-  %label Title
-  %br
-  %input{ :type => 'text', :name => 'title' }
-  %br
 
   %label Body
   %br
