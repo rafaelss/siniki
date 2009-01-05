@@ -85,7 +85,7 @@ post '/login' do
   user = User.login(params[:username], params[:password])
   if user
     session[:username] = user.username
-    redirect session.delete(:redirect_back_to)
+    redirect session.delete(:redirect_back_to) || '/'
   else
     haml :login
   end
