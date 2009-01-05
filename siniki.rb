@@ -31,20 +31,20 @@ get '/setup' do
   DataMapper.auto_migrate!
 
   page = Page.new
-  page.attributes = {:title => 'Welcome'}
+  page.attributes = { :title => 'Welcome' }
   page.save
 
   page = Page.new
-  page.attributes = {:title => 'Menu', :body => '[Edit menu](/menu/edit)'}
+  page.attributes = { :title => 'Menu', :body => erb(:menu) }
   page.save
 
   page = Page.new
-  page.attributes = {:title => 'Header', :body => '[Edit header](/header/edit)'}
+  page.attributes = { :title => 'Header', :body => erb(:header) }
   page.save
 
   # TODO change admin password
   user = User.new
-  user.attributes = {:username => 'admin', :password => 'aaa123' }
+  user.attributes = { :username => 'admin', :password => 'aaa123' }
   user.save
 
   "<p>siniki is ready to run!</p><a href='/'>Go to home</a>"
