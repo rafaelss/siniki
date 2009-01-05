@@ -52,7 +52,11 @@ end
 
 post '/save' do
   if params[:title].nil?
-    params[:title] = params[:permalink].titleize
+    unless params[:id].nil?
+      page = Page.get(params[:id])
+      params[:title] = page.title
+      params[:permalink] = page.permalink
+    end
   end
 
   page_id = params.delete('id')
