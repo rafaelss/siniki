@@ -11,7 +11,7 @@ Sinatra::Application.default_options.merge!(
   :env          => ENV['RACK_ENV'].to_sym
 )
 
-log = File.new("sinatra.log", "a")
+log = File.new("siniki.log", "a")
 STDOUT.reopen(log)
 STDERR.reopen(log)
 
