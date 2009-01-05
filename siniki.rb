@@ -13,8 +13,10 @@ require 'monkeypatches'
 enable :sessions
 
 before do
-  @header = Page.header.html_body
-  @menu = Page.menu.html_body
+  unless request.env['PATH_INFO'] == '/setup'
+    @header = Page.header.html_body
+    @menu = Page.menu.html_body
+  end
 end
 
 error do
@@ -22,7 +24,9 @@ error do
 end
 
 get '/setup' do
-  require_login
+  if File.exists?("./siniki.db")
+    throw :halt, "Wiki is up and running, setup could not be executed"
+  end
 
   DataMapper.auto_migrate!
 
