@@ -17,6 +17,10 @@ before do
   @menu = Page.menu.html_body
 end
 
+error do
+  "Sorry there was a error - #{request.env['sinatra.error']}"
+end
+
 get '/setup' do
   require_login
 
