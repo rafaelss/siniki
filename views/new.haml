@@ -4,6 +4,15 @@
   - unless @permalink.nil?
     %input{ :type => 'hidden', :name => 'permalink', :value => @permalink }
 
+  - if @title.nil? && !@permalink.nil?
+    %label Title
+    %br
+    %input{ :type => 'text', :name => 'title', :value => @permalink.titleize }
+    %br
+  - else
+    %input{ :type => 'hidden', :name => 'title', :value => @title }
+    %br
+
   %label Body
   %br
   %textarea{ :name => 'body', :rows => 28, :cols => 100 }

@@ -44,7 +44,7 @@ class Page
 
   def process_body
     unless self.body.nil?
-      markdown = RDiscount.new(self.body)
+      markdown = RedCloth.new(self.body)
       self.html_body = markdown.to_html
     end
   end

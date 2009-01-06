@@ -1,9 +1,9 @@
 module Siniki
-  module Markdown
-    def new(html)
+  module Markup
+    def initialize(html)
       super(html.gsub(/\[\[([\w |]+)\]\]/) do |m|
         title, link = $1.split('|')
-        "[#{title}](/#{(link||title).to_permalink})"
+        "\"#{title}\":/#{(link||title).to_permalink}"
       end)
     end
   end
@@ -17,5 +17,5 @@ module Siniki
   end
 end
 
-RDiscount.extend(Siniki::Markdown)
+RedCloth.include(Siniki::Markup)
 String.send(:include, Siniki::String)

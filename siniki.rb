@@ -4,7 +4,7 @@ require 'rubygems'
 require 'dm-core'
 require 'sinatra'
 require 'unicode'
-require 'rdiscount'
+require 'redcloth'
 require 'activesupport'
 require 'models'
 require 'helpers'
@@ -52,7 +52,7 @@ end
 
 post '/save' do
   if params[:title].nil?
-    unless params[:id].nil?
+    if !params[:id].nil?
       page = Page.get(params[:id])
       params[:title] = page.title
       params[:permalink] = page.permalink
